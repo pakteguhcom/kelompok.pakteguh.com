@@ -105,10 +105,11 @@
     if(audio.master){ audio.master.gain.value = state.settings.volume; }
   }
 
+  // FIX: swap yang benar (bug sebelumnya membuat array berisi undefined)
   function shuffleInPlace(arr){
     for(let i=arr.length-1;i>0;i--){
       const j = Math.floor(Math.random()*(i+1));
-      [arr[i], arr[j]] = [arr[j]];
+      [arr[i], arr[j]] = [arr[j], arr[i]];
     }
     return arr;
   }
@@ -147,12 +148,14 @@
   function queueReveal(groups){
     const items = [];
     const k = groups.length;
-    const maxLen = Math.max(...groups.map(g=>g.length));
+    const maxLen = Math.max(...groups.map(g=> (g ? g.length : 0) ), 0);
     for(let r=0;r<maxLen;r++){
       const order = Array.from({length:k}, (_,i)=>i);
       shuffleInPlace(order);
       for(const gi of order){
-        const name = groups[gi][r];
+        const group = groups[gi];
+        if(!group) continue; // guard tambahan
+        const name = group[r];
         if(name !== undefined){ items.push({name, gi}); }
       }
     }
@@ -166,7 +169,7 @@
       stopTimer();
       // Pastikan progress 100%
       progressBar.style.width = '100%';
-      progressEl.setAttribute('aria-valuenow', '100');
+      if(progressEl){ progressEl.setAttribute('aria-valuenow', '100'); }
 
       setStatus('Selesai! 🎉');
       setButtonsState({ running:false, done:true });
@@ -175,7 +178,6 @@
       audioStinger();
       stopBgm(true);            // otomatis berhenti saat selesai
       lights.classList.remove('on'); // matikan efek lampu
-
       return;
     }
     const item = state.revealQueue[state.revealed++];
@@ -198,7 +200,7 @@
     const total = state.revealQueue.length || 1;
     const pct = Math.round((state.revealed/total)*100);
     progressBar.style.width = `${pct}%`;
-    progressEl.setAttribute('aria-valuenow', String(pct));
+    if(progressEl){ progressEl.setAttribute('aria-valuenow', String(pct)); }
     setStatus(`Mengungkap: ${state.revealed} / ${total}`);
   }
 
@@ -258,7 +260,7 @@
     state.revealQueue = [];
     state.groups = [];
     progressBar.style.width = '0%';
-    progressEl.setAttribute('aria-valuenow', '0');
+    if(progressEl){ progressEl.setAttribute('aria-valuenow', '0'); }
     setStatus('Siap.');
     groupsContainer.innerHTML = '';
     setButtonsState({running:false, done:false});
@@ -273,7 +275,7 @@
     queueReveal(state.groups);
     setStatus('Siap mengungkap (acak ulang).');
     progressBar.style.width = '0%';
-    progressEl.setAttribute('aria-valuenow', '0');
+    if(progressEl){ progressEl.setAttribute('aria-valuenow', '0'); }
     setButtonsState({running:false, done:false});
   }
 
