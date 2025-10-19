@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1, viewport-fit=cover" />
+  <title>Pembagi Kelompok Acak — Mode Menegangkan</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="app-header">
+    <h1>🎲 Pembagi Kelompok Acak</h1>
+    <p class="tagline">Masukkan nama, atur jumlah/ukuran, lalu mulai pengungkapan dramatis dengan musik latar.</p>
+  </header>
+
+  <main class="app-main">
+    <section class="panel input-panel">
+      <h2>1) Masukkan Daftar Nama</h2>
+
+      <div class="input-row">
+        <textarea id="namesInput" placeholder="Masukkan satu nama per baris, atau pisahkan dengan koma. Contoh:
+Ani
+Budi
+Cici, Dodi, Eko"></textarea>
+
+        <div class="file-column">
+          <label class="file-drop" id="fileDrop" aria-label="Impor file .txt atau .csv">
+            <input type="file" id="fileInput" accept=".txt,.csv" hidden />
+            <div class="file-drop-inner">
+              <strong>Impor .txt / .csv</strong>
+              <span>Tarik & letakkan file di sini, atau klik untuk pilih.</span>
+            </div>
+          </label>
+
+          <div class="input-actions">
+            <button id="btnSeedSample" class="secondary">✨ Isi contoh</button>
+            <button id="btnClear" class="ghost">🧽 Bersihkan</button>
+          </div>
+
+          <small class="hint">Format file: satu nama per baris atau dipisah koma. Baris/header kosong akan diabaikan.</small>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel settings-panel">
+      <h2>2) Atur Pengelompokan</h2>
+
+      <div class="settings-grid">
+        <div class="setting">
+          <label class="radio">
+            <input type="radio" name="groupMode" value="count" id="modeCount" checked />
+            <span>Jumlah kelompok</span>
+          </label>
+          <input type="number" id="groupCount" min="2" step="1" value="3" />
+        </div>
+
+        <div class="setting">
+          <label class="radio">
+            <input type="radio" name="groupMode" value="size" id="modeSize" />
+            <span>Ukuran per kelompok</span>
+          </label>
+          <input type="number" id="groupSize" min="2" step="1" value="3" disabled />
+        </div>
+
+        <div class="setting">
+          <label for="revealSpeed">Kecepatan pengungkapan</label>
+          <input type="range" id="revealSpeed" min="1" max="5" value="3" />
+          <small class="hint">1: sangat lambat, 5: sangat cepat</small>
+        </div>
+
+        <div class="setting">
+          <label class="checkbox">
+            <input type="checkbox" id="dramaticMode" checked />
+            <span>Mode menegangkan (efek lampu & suspense)</span>
+          </label>
+        </div>
+
+        <div class="setting">
+          <label class="checkbox">
+            <input type="checkbox" id="bgmEnabled" checked />
+            <span>Musik latar</span>
+          </label>
+          <label for="volume">Volume</label>
+          <input type="range" id="volume" min="0" max="100" value="45" />
+        </div>
+
+        <div class="setting">
+          <label for="musicStyle">Gaya musik</label>
+          <select id="musicStyle">
+            <option value="cinematic" selected>Cinematic Pulse (disarankan)</option>
+            <option value="suspense">Suspense Synth</option>
+            <option value="ambient">Ambient Chill</option>
+            <option value="lofi">Lofi Groove</option>
+          </select>
+          <small class="hint">Pilih nuansa musik latar.</small>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel control-panel">
+      <h2>3) Mulai!</h2>
+      <div class="controls">
+        <button id="btnStart" class="primary">▶️ Mulai Pengelompokan</button>
+        <button id="btnPause" class="secondary" disabled>⏸️ Jeda</button>
+        <button id="btnReset" class="ghost" disabled>↩️ Reset</button>
+        <button id="btnReshuffle" class="ghost" disabled>🔀 Acak Ulang</button>
+        <button id="btnExport" class="secondary" disabled>⬇️ Unduh Hasil (CSV)</button>
+      </div>
+
+      <div id="status" class="status" aria-live="polite">Siap.</div>
+
+      <div id="progressEl" class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Kemajuan pengungkapan">
+        <div id="progressBar" class="progress-bar" style="width:0%"></div>
+      </div>
+    </section>
+
+    <section class="panel stage-panel">
+      <div id="lights" class="lights" aria-hidden="true"></div>
+      <h2>Hasil Pengelompokan</h2>
+      <div id="groupsContainer" class="groups"></div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <small>Tips: Putar suara perangkat Anda. Musik latar disintesis di browser (tanpa file eksternal).</small>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
